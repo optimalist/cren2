@@ -1,0 +1,51 @@
+<form id="form1" method="post" action ="<?php echo $_SERVER['PHP_SELF']; ?>"> <label>
+<input id="search" name="search" type="text" />
+</label>
+<label>
+<input type="submit" />
+</label>
+<img src="loading.gif" width="16" height="11" />
+</form>
+<p>
+
+<?php
+$search= $_REQUEST['search'];
+if ($search > ''){ $search = $search;} else { $search = '';}
+?>
+
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+google.load('visualization', '1', {packages: ['table']});
+</script>
+<script type="text/javascript">
+var visualization;
+
+function drawVisualization() {
+
+var query = new google.visualization.Query(
+'http://spreadsheets.google.com/tq?key=1VxGfF3ClZWhhbhbIWgEnyZxSw6xNu39vIiOUb_WY9J0&hl=en_GB');
+
+query.setQuery('SELECT A, B, C, D, E, F, G where (A) like upper("%<?php echo $search; ?>%") or upper(B) like upper("%<?php echo $search; ?>%") order by A asc label A "Constit", B "First", C "Last", D "Category", E "Total", F "Email", G "URL"');
+
+query.send(handleQueryResponse);
+}
+
+function handleQueryResponse(response) {
+if (response.isError()) {
+alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+return;
+}
+
+var data = response.getDataTable();
+
+visualization = new google.visualization.Table(document.getElementById('table'));
+visualization.draw(data, {legend: 'bottom'});
+
+}
+
+google.setOnLoadCallback(drawVisualization);
+</script>
+
+<div id="table"></div>
+
+</div>
